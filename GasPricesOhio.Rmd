@@ -1,0 +1,18 @@
+library(ggplot2)
+library(scales)
+library(ggthemes)
+library(dplyr)
+library(lubridate)
+
+gas <- read.csv('C:/Users/Andrew/Desktop/OhioGasPrices.csv')
+gas$Date <- as.Date(gas$Date, format='%m/%d/%Y')
+gas <- gas %>% group_by(Date=floor_date(Date, "1 month")) %>%
+  summarize(Weekly.Regular.Average=mean(Weekly.Regular.Average))
+ggplot(gas, aes(x=Date, y=Weekly.Regular.Average)) +
+  geom_line(size=1, color='#146D8A')+
+  geom_point(fill='#072028')+
+  ylab('Monthly Average Price')+
+  ggtitle('Ohio Regular Unleaded Gas Prices, May 2003 - June 2019') + theme_pander()+
+  scale_x_date(date_labels='%Y',date_breaks = "1 year") + 
+  scale_y_continuous(breaks=c(1.00,1.25, 1.50,1.75,2.00,2.25, 2.50,2.75, 3.00,3.25, 3.50, 3.75, 4.00), 
+                     labels = dollar_format(prefix='$'))
